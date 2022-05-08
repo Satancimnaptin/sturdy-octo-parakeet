@@ -1,0 +1,100 @@
+<html lang="en">
+  <head>
+    <title>Attack System</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/b8a87cc4bf.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      body {
+        background: #333;
+      }
+      .rotater {
+        animation-name: spin;
+        animation-duration: 2000ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      * {
+        outline: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Attack System</h1>
+        <%- user ? '<span id="logout">Çıkış Yap</span>' : '<span id="login">Giriş Yap</span>' %>
+      </header>
+      
+      <% function error(text) { %><%- include('./pages/error.ejs', { text }); %><% } %>
+      <% function success(text) { %><%- include('./pages/success.ejs', { text }); %><% } %>
+
+      <div class="ways">
+        <ul>
+          <li class="<%= req.isLogin() ? '' : 'active' %>">Giriş Yap</li>
+          <li class="<%= req.isLogin() ? 'active' : '' %>">Attacker</li>
+          <% if (req.isAdmin()) { %>
+          <li class="">Yetkililer</li>
+          <li class="">Yeni Yetkili</li>
+          <% } %>
+        </ul>
+      </div>
+
+      <div class="sections">
+        <section class="<%= req.isLogin() ? '' : 'active' %>"><form style="padding-bottom:15px;padding-top:10px;"><%- !req.isLogin() ? include('./pages/login.html') : success(`${user.username}#${user.discriminator}`) %></form></section>
+        <section class="<%= req.isLogin() ? 'active' : '' %>">
+          <% if (req.isLogin()) { %>
+            <% if (req.isAdmin()) { %>
+              <form id="attacker-form"><%- include('./pages/attack.html') %><%- include('./pages/buttons-kit.html') %></form>
+            <% } else { %>
+              <%- error("Bu sekme için yetkin yok!") %>
+            <% } %>
+          <% } else { %>
+            <%- error("Bu sekme için giriş yapmalısın!") %>
+          <% } %>
+        </section>
+        
+        <% if (req.isAdmin()) { %>
+        <section class="">
+          <% if (req.isLogin()) { %>
+            <% if (req.isAdmin()) { %>
+              <form><%- include('./pages/admin.ejs') %></form>
+            <% } else { %>
+              <%- error("Bu sekme için yetkin yok!") %>
+            <% } %>
+          <% } else { %>
+            <%- error("Bu sekme için giriş yapmalısın!") %>
+          <% } %>
+        </section>
+        <section class="">
+          <% if (req.isLogin()) { %>
+            <% if (req.isAdmin()) { %>
+              <form id="new-admin-form"><%- include('./pages/new-admin.html') %><%- include('./pages/buttons-kit.html') %></form>
+            <% } else { %>
+              <%- error("Bu sekme için yetkin yok!") %>
+            <% } %>
+          <% } else { %>
+            <%- error("Bu sekme için giriş yapmalısın!") %>
+          <% } %>
+        </section>
+        <% } %>
+      </div>
+    </div>
+  </body>
+  <script src="/script.js"></script>
+</html>

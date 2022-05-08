@@ -1,0 +1,5 @@
+<div class="administrators">
+  <% db.fetch('administrators').forEach(async user => { %>
+  <span onclick="removeAdmin('<%=user.id%>')" class="admin<%=user.perm == 0 ? ' owner' : ''%>"><p><%= user.username %></p> <p perm="<%=global.permToText(user.perm)%>"></p></span>
+  <% }); %>
+</div>
